@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Aug 13 23:31:46 2024
-
-@author: Sai.Vigneshwar
-"""
-
 import pandas as pd
 from datetime import datetime
 import re
@@ -101,6 +94,22 @@ stores_df['Square Meters'].fillna('Unknown', inplace=True)
 # Convert date columns to datetime format for exchange_rates_df
 exchange_rates_df['Date'] = pd.to_datetime(exchange_rates_df['Date'], format='%m/%d/%Y', errors='coerce')
 
+# Save cleaned DataFrames to CSV
+customers_output_path = 'C:/Users/Sai.Vigneshwar/OneDrive - Collaborate 365/Sai data (30-05-23)/Desktop/Sai/Python/Guvi/DataSpark Illuminating Insights for Global Electronics/Save files/Customers_file.csv'
+customers_df.to_csv(customers_output_path, index=False)
+
+products_output_path = 'C:/Users/Sai.Vigneshwar/OneDrive - Collaborate 365/Sai data (30-05-23)/Desktop/Sai/Python/Guvi/DataSpark Illuminating Insights for Global Electronics/Save files/Products_file.csv'
+products_df.to_csv(products_output_path, index=False)
+
+sales_output_path = 'C:/Users/Sai.Vigneshwar/OneDrive - Collaborate 365/Sai data (30-05-23)/Desktop/Sai/Python/Guvi/DataSpark Illuminating Insights for Global Electronics/Save files/Sales_file.csv'
+sales_df.to_csv(sales_output_path, index=False)
+
+stores_output_path = 'C:/Users/Sai.Vigneshwar/OneDrive - Collaborate 365/Sai data (30-05-23)/Desktop/Sai/Python/Guvi/DataSpark Illuminating Insights for Global Electronics/Save files/Stores_file.csv'
+stores_df.to_csv(stores_output_path, index=False)
+
+exchange_rates_output_path = 'C:/Users/Sai.Vigneshwar/OneDrive - Collaborate 365/Sai data (30-05-23)/Desktop/Sai/Python/Guvi/DataSpark Illuminating Insights for Global Electronics/Save files/Exchange_Rates_file.csv'
+exchange_rates_df.to_csv(exchange_rates_output_path, index=False)
+
 # Initialize merged_df with sales_df
 merged_df = sales_df
 
@@ -131,14 +140,7 @@ output_file_path = 'C:/Users/Sai.Vigneshwar/OneDrive - Collaborate 365/Sai data 
 merged_df.to_csv(output_file_path, index=False)
 
 
-# Basic summary statistics
-print("Summary Statistics:\n", merged_df.describe(include='all'))
-# print(merged_df.describe(include='all'))
-des = merged_df.describe(include='all')
-
-# Checking for missing values
-print("Missing Values:")
-print(merged_df.isnull().sum())
+# EDA - Exploratory Data Analysis
 
 # Univariate Analysis
 # Histograms for numerical columns
@@ -154,7 +156,7 @@ for col in categorical_columns:
     plt.title(f'Count plot for {col}')
     plt.show()
 
-# EDA - Exploratory Data Analysis
+
 # 1. Country & Product
 plt.figure(figsize=(10, 6))
 sns.countplot(data=merged_df, x='Country_x', hue='Category')
@@ -198,45 +200,20 @@ g.set_xticklabels(rotation=45)
 g.fig.suptitle('Category & Quantity by Age Category', y=1.02)
 plt.show()
 
-# 6. Country, Unit cost & Category
-# Ensure 'Unit Cost USD' is numeric
-merged_df['Unit Cost USD'] = pd.to_numeric(merged_df['Unit Cost USD'], errors='coerce')
-plt.figure(figsize=(10, 6))
-sns.barplot(data=merged_df, x='Country_x', y='Unit Cost USD', hue='Category', estimator=sum)
-plt.title('Country_x & Unit Cost USD by Category')
-plt.xticks(rotation=45)
-plt.legend(title='Category')
-plt.show()
-
-
-# 7. Country & Quantity
+# 6. Country & Quantity
 plt.figure(figsize=(10, 6))
 sns.countplot(data=merged_df, x='Country_x', hue='Quantity')
 plt.title('Country_x & Quantity')
 plt.xticks(rotation=45)
 plt.show()
 
-# 8. Quantity & City
-plt.figure(figsize=(10, 30))
-sns.countplot(data=merged_df, x='City', hue='Quantity')
-plt.title('City & Quantity')
-plt.xticks(rotation=45)
-plt.show()
-
-
-# 8. Open Date & Country
+# 7. Open Date & Country
 plt.figure(figsize=(10, 30))
 sns.countplot(data=merged_df, x='Country_x', hue='StoreKey')
 plt.title('Country_x & StoreKey')
 plt.xticks(rotation=45)
 plt.show()
 
-# 9. Open Date & Country
-plt.figure(figsize=(10, 30))
-sns.countplot(data=merged_df, x='Country_x', hue='Open Date')
-plt.title('Country_x & Open Date')
-plt.xticks(rotation=45)
-plt.show()
 
 # 8. Agecategory & Country
 plt.figure(figsize=(10, 30))
@@ -246,7 +223,44 @@ plt.xticks(rotation=45)
 plt.show()
 
 
+# 9. Heatmap of Country and Category
+plt.figure(figsize=(12, 8))
+country_category_pivot = pd.crosstab(merged_df['Country_x'], merged_df['Category'])
+sns.heatmap(country_category_pivot, annot=True, fmt='d', cmap='Blues')
+plt.title('Heatmap of Country and Category')
+plt.show()
+
+plt.figure(figsize=(12, 8))
+country_category_pivot = pd.crosstab(merged_df['Brand'], merged_df['Category'])
+sns.heatmap(country_category_pivot, annot=True, fmt='d', cmap='Blues')
+plt.title('Heatmap of Brand and Category')
+plt.show()
+
+# Brand & gender
+plt.figure(figsize=(12, 8))
+country_category_pivot = pd.crosstab(merged_df['Brand'], merged_df['Gender'])
+sns.heatmap(country_category_pivot, annot=True, fmt='d', cmap='Blues')
+plt.title('Heatmap of Brand and Gender')
+plt.show()
+
+# Country & gender
+plt.figure(figsize=(12, 8))
+country_category_pivot = pd.crosstab(merged_df['Country_x'], merged_df['Gender'])
+sns.heatmap(country_category_pivot, annot=True, fmt='d', cmap='Blues')
+plt.title('Heatmap of Country_x and Gender')
+plt.show()
 
 
+# 10. #scatter plot Brand VS currency code
+plt.figure(figsize=(12, 8))
+sns.scatterplot(data=merged_df, x='Currency Code', y='Brand', hue='Currency Code')
+plt.title('Scatter Plot of Brand vs. Currency Code by Currency Code')
+plt.show()
 
 
+# 11. Line plots
+plt.figure(figsize=(12, 8))
+sns.lineplot(data=merged_df, x='Brand', y='Gender', hue='Gender')
+plt.title('Line Plot of Gender Over Time by Brand')
+plt.xticks(rotation=45)
+plt.show()
